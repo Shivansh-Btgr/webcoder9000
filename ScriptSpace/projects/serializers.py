@@ -16,3 +16,4 @@ class FileSerializer(serializers.ModelSerializer):
 
 class RunSavedFileSerializer(serializers.Serializer):
     file_id = serializers.IntegerField()
+    input = serializers.CharField(required=False, allow_blank=True, default="")

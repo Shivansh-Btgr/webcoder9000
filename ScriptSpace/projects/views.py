@@ -76,9 +76,10 @@ class RunSavedFileView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         file_id = serializer.validated_data['file_id']
+        input_data = serializer.validated_data.get('input', "")
         try:
             file = File.objects.get(pk=file_id, project__owner=request.user)
         except File.DoesNotExist:
             return Response({'error': 'File not found or forbidden'}, status=status.HTTP_404_NOT_FOUND)
-        result = run_code(file.content, file.language)
+        result = run_code(file.content, file.language, input_data)
         return Response(result, status=status.HTTP_200_OK)

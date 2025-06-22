@@ -69,8 +69,8 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 - `DELETE /api/files/<id>/`                    — Delete a file (owner only)
 
 ### Code Execution
-- `POST   /api/run-file/`            ✅          — Run a saved file (provide `file_id`)
-- `POST   /api/execute/`             ✅          — Run code snippet (provide `code`, `language`, optional `input`)
+- `POST   /api/run-file/`                      — Run a saved file (provide `file_id`)
+- `POST   /api/execute/`                       — Run code snippet (provide `code`, `language`, optional `input`)
 
 ### API Documentation
 - `GET    /api/docs/`                          — Swagger/OpenAPI interactive docs

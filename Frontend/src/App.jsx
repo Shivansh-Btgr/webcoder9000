@@ -8,7 +8,6 @@ import EditProject from "./components/project/EditProject";
 import CreateProject from "./components/project/CreateProject";
 import FileDetail from "./components/file/FileDetail";
 import CreateFile from "./components/file/CreateFile";
-import EditFile from "./components/file/EditFile";
 
 const App = () => {
   const [page, setPage] = useState("login");
@@ -21,7 +20,6 @@ const App = () => {
   const [creatingProject, setCreatingProject] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [creatingFile, setCreatingFile] = useState(false);
-  const [editingFile, setEditingFile] = useState(null);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -354,16 +352,6 @@ const App = () => {
         onBack={handleBackToDashboard}
         onCreateFile={handleCreateFile}
         onFileClick={handleFileClick}
-      />
-    );
-  }
-
-  if (page === "edit-file" && editingFile) {
-    return (
-      <EditFile
-        file={editingFile}
-        onBack={() => setPage("file-detail")}
-        onSave={handleFileEdited}
       />
     );
   }
