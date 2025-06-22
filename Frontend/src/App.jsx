@@ -5,6 +5,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import EditProfile from "./components/auth/EditProfile";
 import ProjectDetail from "./components/project/ProjectDetail";
 import EditProject from "./components/project/EditProject";
+import CreateProject from "./components/project/CreateProject";
 
 const App = () => {
   const [page, setPage] = useState("login");
@@ -14,6 +15,7 @@ const App = () => {
   const [projectFiles, setProjectFiles] = useState([]);
   const [loadingProjectFiles, setLoadingProjectFiles] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [creatingProject, setCreatingProject] = useState(false);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -175,6 +177,22 @@ const App = () => {
     }
   };
 
+  // Handler for creating a project
+  const handleCreateProject = () => {
+    setCreatingProject(true);
+    setPage("create-project");
+  };
+
+  // Handler for after project is created
+  const handleProjectCreated = (newProject) => {
+    setDashboardData(prev => {
+      if (!prev) return prev;
+      return { ...prev, projects: [newProject, ...prev.projects] };
+    });
+    setCreatingProject(false);
+    setPage("dashboard");
+  };
+
   if (page === "edit-profile" && user) {
     return (
       <EditProfile
@@ -194,6 +212,15 @@ const App = () => {
         project={editingProject}
         onBack={() => setPage("project-detail")}
         onSave={handleSaveProject}
+      />
+    );
+  }
+
+  if (page === "create-project" && creatingProject) {
+    return (
+      <CreateProject
+        onBack={() => { setCreatingProject(false); setPage("dashboard"); }}
+        onCreate={handleProjectCreated}
       />
     );
   }
@@ -220,8 +247,7 @@ const App = () => {
         onMenu={() => {}}
         onChangePassword={() => alert("Change Password")}
         onEditProfile={handleEditProfile}
-        onCreateProject={() => alert("Create Project")}
-        onCreateFile={() => alert("Create File")}
+        onCreateProject={handleCreateProject}
         onProjectClick={handleProjectClick}
       />
     );

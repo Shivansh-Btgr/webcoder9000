@@ -53,7 +53,7 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 
 ### Projects
 - `GET    /api/projects/`                      — List all projects for the authenticated user
-- `POST   /api/projects/` ✅                     — Create a new project
+- `POST   /api/projects/`                      — Create a new project
 - `GET    /api/projects/<id>/`                — Retrieve a specific project (owner only)
 - `PUT    /api/projects/<id>/`                 — Update/rename a project (owner only)
 - `PATCH  /api/projects/<id>/`                 — Partially update a project (owner only)
