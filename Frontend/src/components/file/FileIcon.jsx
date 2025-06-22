@@ -1,11 +1,11 @@
 import React from "react";
 
-const FileIcon = ({ name, updatedAt }) => {
+const FileIcon = ({ filename, language }) => {
   return (
     <div className="icon-card file-icon">
       <div className="icon-symbol">📄</div>
-      <div className="icon-name">{name}</div>
-      <div className="icon-updated">{new Date(updatedAt).toLocaleString()}</div>
+      <div className="icon-name">{filename}</div>
+      <div className="icon-language">{language}</div>
     </div>
   );
 };

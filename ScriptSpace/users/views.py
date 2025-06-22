@@ -94,5 +94,3 @@ class PasswordResetConfirmView(APIView):
             else:
                 return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# Login and token refresh are handled by SimpleJWT's TokenObtainPairView and TokenRefreshView

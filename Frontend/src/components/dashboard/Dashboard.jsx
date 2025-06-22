@@ -59,7 +59,7 @@ const Dashboard = ({ projects = [], files = [], onCreateProject, onCreateFile, o
               <div className="empty-msg">No files found.</div>
             ) : (
               files.map(file => (
-                <FileIcon key={file.id} name={file.name} updatedAt={file.updated_at} />
+                <FileIcon key={file.id} filename={file.filename} language={file.language} />
               ))
             )}
           </div>

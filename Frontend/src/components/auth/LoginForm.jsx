@@ -2,7 +2,7 @@ import { useState } from "react";
 import SocialLogin from "../common/SocialLogin";
 import InputField from "../common/InputField";
 
-const LoginForm = ({ onSwitchToRegister, onSwitchToForgot }) => {
+const LoginForm = ({ onSwitchToRegister, onSwitchToForgot, onLoginSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,12 +22,12 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToForgot }) => {
       if (response.ok && data.access) {
         localStorage.setItem("access_token", data.access);
         localStorage.setItem("refresh_token", data.refresh);
-        // Optionally redirect or update app state here
+        onLoginSuccess && onLoginSuccess(data.access);
       } else {
-        setError(data.detail || "Login failed");
+        setError("user login failed");
       }
     } catch (err) {
-      setError("Network error");
+      setError("user login failed");
     } finally {
       setLoading(false);
     }
@@ -35,6 +35,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToForgot }) => {
 
   return (
     <div className="login-container">
+      {error && <div className="error-message" style={{ marginBottom: 16 }}>{error}</div>}
       <h2 className="form-title">Log in with</h2>
       <SocialLogin />
 
@@ -45,7 +46,6 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToForgot }) => {
         <InputField type="password" placeholder="Password" icon="lock" value={password} onChange={e => setPassword(e.target.value)} />
         <a href="#" className="forgot-password-link" onClick={e => { e.preventDefault(); onSwitchToForgot(); }}>Forgot password?</a>
         <button type="submit" className="login-button" disabled={loading}>{loading ? "Logging in..." : "Log In"}</button>
-        {error && <div className="error-message">{error}</div>}
       </form>
 
       <p className="signup-prompt">
