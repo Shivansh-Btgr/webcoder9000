@@ -1,0 +1,465 @@
+/* Importing Google Fonts - Montserrat */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #18191c;
+}
+
+#root {
+  width: 100%;
+  padding: 0.6rem;
+}
+
+.login-container {
+  margin: 0 auto;
+  max-width: 410px;
+  padding: 2rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-container .form-title {
+  text-align: center;
+  font-size: 1.37rem;
+  font-weight: 600;
+  margin-bottom: 1.87rem;
+}
+
+.login-container .social-login {
+  display: flex;
+  gap: 1.31rem;
+}
+
+.social-login .social-button {
+  display: flex;
+  gap: 0.81rem;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.75rem 0;
+  border-radius: 0.31rem;
+  align-items: center;
+  justify-content: center;
+  background: #F9F8FF;
+  border: 1px solid #D5CBFF;
+  transition: 0.3s ease;
+}
+
+.social-login .social-button:hover {
+  border-color: #5F41E4;
+  background: #f1eff9;
+}
+
+.social-login .social-button .social-icon {
+  width: 23px;
+}
+
+.login-container .separator {
+  position: relative;
+  margin: 1.5rem 0;
+  text-align: center;
+  background: #fff;
+}
+
+.login-container .separator span {
+  z-index: 1;
+  font-weight: 500;
+  color: #6652BE;
+  position: relative;
+  background: #fff;
+  font-size: 1.06rem;
+  padding: 0 0.9rem;
+}
+
+.login-container .separator::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 1px;
+  width: 100%;
+  background: #bfb3f2;
+}
+
+.login-form .input-wrapper {
+  height: 54px;
+  width: 100%;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.login-form .input-field {
+  width: 100%;
+  height: 100%;
+  outline: none;
+  font-size: 1.06rem;
+  border-radius: 0.31rem;
+  border: 1px solid #bfb3f2;
+  padding: 0px 1.25rem 0 3.12rem;
+  transition: 0.2s ease;
+}
+
+.login-form .input-field:focus {
+  border-color: #5F41E4;
+}
+
+.login-form .input-field::placeholder {
+  color: #9284c8;
+}
+
+.login-form .input-wrapper i {
+  position: absolute;
+  top: 50%;
+  height: 100%;
+  display: flex;
+  color: #a395e0;
+  align-items: center;
+  transform: translateY(-50%);
+  transition: 0.2s ease;
+}
+
+.login-form .input-wrapper i:not(.eye-icon) {
+  left: 0.93rem;
+  pointer-events: none;
+}
+
+.login-form .input-field:focus ~ i:not(.eye-icon) {
+  color: #5F41E4;
+}
+
+.login-form .input-wrapper i.eye-icon {
+  display: none;
+  right: 0.93rem;
+  color: #917DE8;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.login-form .input-wrapper .input-field:valid ~ .eye-icon {
+  display: flex;
+}
+
+.login-form .forgot-password-link {
+  display: block;
+  width: fit-content;
+  margin-top: -0.44rem;
+}
+
+.login-form .login-button {
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 54px;
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 2.19rem;
+  border-radius: 0.31rem;
+  background: #18191c;
+  transition: 0.3s ease;
+}
+
+.login-form .login-button:hover {
+  background: #232428;
+}
+
+.login-container .signup-prompt {
+  text-align: center;
+  font-size: 1.06rem;
+  font-weight: 500;
+  margin: 1.75rem 0 0.31rem;
+}
+
+.login-container a {
+  color: #5F41E4;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-container a:hover {
+  text-decoration: underline;
+}
+
+.dashboard-container {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 2rem 1.5rem;
+  border-radius: 0.7rem;
+  background: #fff;
+  box-shadow: 0 10px 32px 0 rgba(0,0,0,0.10), 0 1.5px 4px 0 rgba(80,80,80,0.10);
+}
+
+.dashboard-navbar {
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  background: #fff;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  z-index: 100;
+}
+.dashboard-menu-btn {
+  margin-left: 1.5rem;
+  background: #f7f7fa;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.07);
+  transition: background 0.2s;
+  position: relative;
+}
+.dashboard-menu-btn:hover {
+  background: #ececec;
+}
+.dashboard-navbar-options-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.dashboard-navbar-options {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.7rem;
+  animation: fadeInRight 0.2s;
+}
+.dashboard-navbar-option {
+  background: #f7f7fa;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #232526;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dashboard-navbar-option:hover {
+  background: #ececec;
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.dashboard-menu-dropdown {
+  position: absolute;
+  top: 55px;
+  left: 0;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.13);
+  min-width: 170px;
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+}
+.dashboard-menu-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  color: #232526;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dashboard-menu-item:hover {
+  background: #f7f7fa;
+}
+
+.dashboard-split-container {
+  display: flex;
+  gap: 3.5rem;
+  max-width: 1200px;
+  margin: 3.5rem auto;
+  padding: 2.5rem 2.5rem;
+  border-radius: 0.7rem;
+  background: #fff;
+  box-shadow: 0 10px 32px 0 rgba(0,0,0,0.10), 0 1.5px 4px 0 rgba(80,80,80,0.10);
+  min-height: 500px;
+  position: relative;
+  margin-top: 80px;
+}
+
+.dashboard-split-container.dashboard-with-divider::before {
+  content: "";
+  position: absolute;
+  top: 2.5rem;
+  bottom: 2.5rem;
+  left: 50%;
+  width: 1.5px;
+  background: #e0e0e0;
+  border-radius: 1px;
+  z-index: 1;
+  transform: translateX(-50%);
+}
+
+.dashboard-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+.create-btn {
+  background: #18191c;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.create-btn:hover {
+  background: #232428;
+}
+
+.dashboard-half {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  z-index: 2;
+}
+
+.dashboard-projects {
+  margin-right: 1.5rem;
+}
+.dashboard-files {
+  margin-left: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: #232526;
+}
+
+.icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.icon-card {
+  width: 150px;
+  height: 140px;
+  background: #f7f7fa;
+  border-radius: 0.6rem;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+.icon-card:hover {
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.13);
+}
+.icon-symbol {
+  font-size: 2.5rem;
+  margin-bottom: 0.7rem;
+}
+.icon-name {
+  font-size: 1.08rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+.icon-updated {
+  font-size: 0.92rem;
+  color: #888;
+  text-align: center;
+}
+.empty-msg {
+  color: #aaa;
+  font-size: 1.1rem;
+  margin: 1.5rem 0;
+}
+
+.project-detail-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  margin-top: 1.5rem;
+}
+.project-detail-info {
+  background: #f7f7fa;
+  border-radius: 0.6rem;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.07);
+  padding: 2rem 2.5rem;
+  font-size: 1.08rem;
+  color: #232526;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.delete-btn {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+.view-files-btn {
+  background: #5F41E4;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.view-files-btn:hover {
+  background: #4320df;
+}
+
+@media (max-width: 900px) {
+  .dashboard-split-container {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem 0.5rem;
+  }
+  .dashboard-split-container::before {
+    display: none;
+  }
+  .dashboard-projects, .dashboard-files {
+    margin: 0;
+  }
+}

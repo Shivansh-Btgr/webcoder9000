@@ -1,0 +1,50 @@
+# Python/Django
+ScriptSpace/__pycache__/
+ScriptSpace/*.py[cod]
+ScriptSpace/*.sqlite3
+ScriptSpace/db.sqlite3
+ScriptSpace/media/
+ScriptSpace/staticfiles/
+ScriptSpace/.env
+ScriptSpace/.venv/
+ScriptSpace/env/
+ScriptSpace/venv/
+*.pyc
+*.pyo
+*.pyd
+
+# Django migrations
+ScriptSpace/**/migrations/
+!ScriptSpace/**/migrations/__init__.py
+
+# Node/React
+Frontend/node_modules/
+Frontend/.env
+Frontend/build/
+Frontend/dist/
+Frontend/.next/
+Frontend/.cache/
+Frontend/yarn-error.log
+Frontend/npm-debug.log
+
+# OS/system files
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
+
+# Logs
+*.log
+
+# Coverage/test
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+coverage.xml
+
+# Misc
+*.swp
+*.swo
+.idea/
