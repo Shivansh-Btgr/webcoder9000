@@ -8,6 +8,7 @@ import EditProject from "./components/project/EditProject";
 import CreateProject from "./components/project/CreateProject";
 import FileDetail from "./components/file/FileDetail";
 import CreateFile from "./components/file/CreateFile";
+import EditFile from "./components/file/EditFile";
 
 const App = () => {
   const [page, setPage] = useState("login");
@@ -20,6 +21,7 @@ const App = () => {
   const [creatingProject, setCreatingProject] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [creatingFile, setCreatingFile] = useState(false);
+  const [editingFile, setEditingFile] = useState(null);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -280,6 +282,26 @@ const App = () => {
     }
   };
 
+  // Handler for opening edit file form
+  const handleEditFile = () => {
+    setEditingFile(selectedFile);
+    setPage("edit-file");
+  };
+
+  // Handler for after file is edited
+  const handleFileEdited = (updatedFile) => {
+    // Update dashboardData.files and projectFiles
+    setDashboardData(prev => {
+      if (!prev) return prev;
+      const files = prev.files.map(f => f.id === updatedFile.id ? updatedFile : f);
+      return { ...prev, files };
+    });
+    setProjectFiles(prev => prev.map(f => f.id === updatedFile.id ? updatedFile : f));
+    setSelectedFile(updatedFile);
+    setEditingFile(null);
+    setPage("file-detail");
+  };
+
   if (page === "edit-profile" && user) {
     return (
       <EditProfile
@@ -336,11 +358,21 @@ const App = () => {
     );
   }
 
+  if (page === "edit-file" && editingFile) {
+    return (
+      <EditFile
+        file={editingFile}
+        onBack={() => setPage("file-detail")}
+        onSave={handleFileEdited}
+      />
+    );
+  }
+
   if (page === "file-detail" && selectedFile) {
     return (
       <FileDetail
         file={selectedFile}
-        onEdit={() => alert("Edit File")}
+        onEdit={handleEditFile}
         onDelete={handleDeleteFile}
         onBack={handleBackToProjectOrDashboard}
       />

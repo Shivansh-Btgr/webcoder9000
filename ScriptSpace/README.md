@@ -62,19 +62,19 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 ### Files
 - `GET    /api/files/`                         — List all files for the authenticated user
 - `GET    /api/files/?project=<id>`            — List all files belonging to a specific project (for the authenticated user; only files from that project will be returned)
-- `POST   /api/files/`               ✅          — Create a new file (must specify project)
-- `GET    /api/files/<id>/`          ✅          — Retrieve a specific file (owner only)
-- `PUT    /api/files/<id>/`          ✅          — Update file content (owner only)
-- `PATCH  /api/files/<id>/`          ✅          — Partially update a file (owner only)
-- `DELETE /api/files/<id>/`          ✅          — Delete a file (owner only)
+- `POST   /api/files/`                         — Create a new file (must specify project)
+- `GET    /api/files/<id>/`                    — Retrieve a specific file (owner only)
+- `PUT    /api/files/<id>/`                    — Update file content (owner only)
+- `PATCH  /api/files/<id>/`                    — Partially update a file (owner only)
+- `DELETE /api/files/<id>/`                    — Delete a file (owner only)
 
 ### Code Execution
 - `POST   /api/run-file/`            ✅          — Run a saved file (provide `file_id`)
 - `POST   /api/execute/`             ✅          — Run code snippet (provide `code`, `language`, optional `input`)
 
 ### API Documentation
-- `GET    /api/docs/`               ✅           — Swagger/OpenAPI interactive docs
-- `GET    /api/schema/`             ✅          — Raw OpenAPI schema (JSON)
+- `GET    /api/docs/`                          — Swagger/OpenAPI interactive docs
+- `GET    /api/schema/`                       — Raw OpenAPI schema (JSON)
 
 ---
 

@@ -10,15 +10,49 @@ const languageOptions = [
   { value: "java", label: "Java" },
 ];
 
-const EditFile = ({ file, onBack }) => {
-  const [name, setName] = useState(file?.name || "");
+const EditFile = ({ file, onBack, onSave }) => {
+  const [name, setName] = useState(file?.filename || "");
   const [language, setLanguage] = useState(languageOptions.find(l => l.value === file?.language) || languageOptions[0]);
   const [content, setContent] = useState(file?.content || "");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`/api/files/${file.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`,
+        },
+        body: JSON.stringify({
+          filename: name,
+          content,
+          language: language.value,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.detail || "Failed to update file");
+        setLoading(false);
+        return;
+      }
+      const updated = await res.json();
+      onSave && onSave(updated);
+    } catch (err) {
+      setError("Network error");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="login-container" style={{ maxWidth: 900 }}>
       <h2 className="form-title">Edit File</h2>
-      <form action="#" className="login-form" onSubmit={e => e.preventDefault()}>
+      <form action="#" className="login-form" onSubmit={handleSubmit}>
         <InputField
           type="text"
           placeholder="File Name"
@@ -45,7 +79,8 @@ const EditFile = ({ file, onBack }) => {
             options={{ fontSize: 16, minimap: { enabled: false } }}
           />
         </div>
-        <button type="submit" className="login-button">Save Changes</button>
+        <button type="submit" className="login-button" disabled={loading}>{loading ? "Saving..." : "Save Changes"}</button>
+        {error && <div className="error-msg" style={{marginTop:8}}>{error}</div>}
       </form>
       <div className="signup-prompt" style={{textAlign: 'center', marginTop: '1.5rem'}}>
         <a href="#" className="signup-link" onClick={e => { e.preventDefault(); onBack && onBack(); }}>Back</a>
