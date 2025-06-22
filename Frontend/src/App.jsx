@@ -206,6 +206,7 @@ const App = () => {
         onEdit={handleEditProject}
         onDelete={handleDeleteProject}
         onBack={handleBackToDashboard}
+        onCreateFile={() => alert("Create File")}
       />
     );
   }

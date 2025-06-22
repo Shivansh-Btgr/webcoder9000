@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ProjectIcon from "../project/ProjectIcon";
 import FileIcon from "../file/FileIcon";
 
-const Dashboard = ({ projects = [], files = [], onCreateProject, onCreateFile, onMenu, onLogout, onChangePassword, onEditProfile, onProjectClick }) => {
+const Dashboard = ({ projects = [], files = [], onCreateProject, onMenu, onLogout, onChangePassword, onEditProfile, onProjectClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -53,7 +53,7 @@ const Dashboard = ({ projects = [], files = [], onCreateProject, onCreateFile, o
         <div className="dashboard-half dashboard-files">
           <div className="dashboard-header-row">
             <h2 className="dashboard-title">Your Files</h2>
-            <button className="create-btn" onClick={onCreateFile}>+ New File</button>
+            {/* Removed create file button from dashboard */}
           </div>
           <div className="icon-grid">
             {files.length === 0 ? (

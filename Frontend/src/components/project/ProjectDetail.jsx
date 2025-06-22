@@ -1,7 +1,7 @@
 import React from "react";
 import FileIcon from "../file/FileIcon";
 
-const ProjectDetail = ({ project, files, onEdit, onDelete, onBack }) => {
+const ProjectDetail = ({ project, files, onEdit, onDelete, onBack, onCreateFile }) => {
   if (!project) return <div className="dashboard-split-container"><div className="empty-msg">Project not found.</div></div>;
   // Defensive: parse dates only if present and valid
   let createdAt = project.created_at ? new Date(project.created_at) : null;
@@ -15,6 +15,7 @@ const ProjectDetail = ({ project, files, onEdit, onDelete, onBack }) => {
           <h2 className="dashboard-title">{project.name}</h2>
           <div>
             <button className="create-btn" onClick={onEdit} style={{marginRight: '0.7rem'}}>Edit Project</button>
+            <button className="create-btn" onClick={onCreateFile} style={{marginRight: '0.7rem'}}>+ New File</button>
             <button className="delete-btn" onClick={onDelete}>Delete Project</button>
           </div>
         </div>
