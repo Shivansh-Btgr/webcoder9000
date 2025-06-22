@@ -3,11 +3,17 @@ import RegisterForm from "./components/auth/RegisterForm";
 import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./components/dashboard/Dashboard";
 import EditProfile from "./components/auth/EditProfile";
+import ProjectDetail from "./components/project/ProjectDetail";
+import EditProject from "./components/project/EditProject";
 
 const App = () => {
   const [page, setPage] = useState("login");
   const [dashboardData, setDashboardData] = useState(null);
   const [user, setUser] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [projectFiles, setProjectFiles] = useState([]);
+  const [loadingProjectFiles, setLoadingProjectFiles] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -86,6 +92,89 @@ const App = () => {
     }
   };
 
+  // Handler for clicking a project in dashboard
+  const handleProjectClick = async (project) => {
+    setSelectedProject(project);
+    setLoadingProjectFiles(true);
+    setProjectFiles([]);
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`/api/files/?project=${project.id}`, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      const files = await res.json();
+      setProjectFiles(files);
+    } catch (err) {
+      setProjectFiles([]);
+    }
+    setLoadingProjectFiles(false);
+    setPage("project-detail");
+  };
+
+  // Handler for going back to dashboard from project detail
+  const handleBackToDashboard = () => {
+    setSelectedProject(null);
+    setProjectFiles([]);
+    setPage("dashboard");
+  };
+
+  // Handler for opening edit project form
+  const handleEditProject = () => {
+    setEditingProject(selectedProject);
+    setPage("edit-project");
+  };
+
+  // Handler for saving project changes
+  const handleSaveProject = (updatedProject) => {
+    // Update dashboardData.projects and selectedProject
+    setDashboardData((prev) => {
+      if (!prev) return prev;
+      const projects = prev.projects.map((p) =>
+        p.id === updatedProject.id ? updatedProject : p
+      );
+      return { ...prev, projects };
+    });
+    setSelectedProject(updatedProject);
+    setEditingProject(null);
+    setPage("project-detail");
+  };
+
+  // Handler for deleting a project
+  const handleDeleteProject = async () => {
+    if (!selectedProject) return;
+    if (!window.confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`/api/projects/${selectedProject.id}/`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      if (!res.ok) {
+        alert("Failed to delete project.");
+        return;
+      }
+      // Remove project from dashboardData
+      setDashboardData(prev => {
+        if (!prev) return prev;
+        const projects = prev.projects.filter(p => p.id !== selectedProject.id);
+        return { ...prev, projects };
+      });
+      setSelectedProject(null);
+      setProjectFiles([]);
+      setPage("dashboard");
+    } catch (err) {
+      alert("Network error while deleting project.");
+    }
+  };
+
   if (page === "edit-profile" && user) {
     return (
       <EditProfile
@@ -95,6 +184,28 @@ const App = () => {
           setPage("dashboard");
         }}
         onCancel={() => setPage("dashboard")}
+      />
+    );
+  }
+
+  if (page === "edit-project" && editingProject) {
+    return (
+      <EditProject
+        project={editingProject}
+        onBack={() => setPage("project-detail")}
+        onSave={handleSaveProject}
+      />
+    );
+  }
+
+  if (page === "project-detail" && selectedProject) {
+    return (
+      <ProjectDetail
+        project={selectedProject}
+        files={projectFiles}
+        onEdit={handleEditProject}
+        onDelete={handleDeleteProject}
+        onBack={handleBackToDashboard}
       />
     );
   }
@@ -110,6 +221,7 @@ const App = () => {
         onEditProfile={handleEditProfile}
         onCreateProject={() => alert("Create Project")}
         onCreateFile={() => alert("Create File")}
+        onProjectClick={handleProjectClick}
       />
     );
   }

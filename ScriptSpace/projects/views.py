@@ -45,7 +45,11 @@ class FileListCreateView(generics.ListCreateAPIView):
     serializer_class = FileSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
     def get_queryset(self):
-        return File.objects.filter(project__owner=self.request.user)
+        queryset = File.objects.filter(project__owner=self.request.user)
+        project_id = self.request.query_params.get('project')
+        if project_id:
+            queryset = queryset.filter(project_id=project_id)
+        return queryset
     def perform_create(self, serializer):
         # Only allow creating files for projects owned by the user
         project = serializer.validated_data['project']

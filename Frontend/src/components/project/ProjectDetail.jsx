@@ -1,12 +1,14 @@
 import React from "react";
 import FileIcon from "../file/FileIcon";
 
-const ProjectDetail = ({ project, onEdit, onDelete, onViewFiles }) => {
+const ProjectDetail = ({ project, files, onEdit, onDelete, onBack }) => {
   if (!project) return <div className="dashboard-split-container"><div className="empty-msg">Project not found.</div></div>;
+  // Defensive: parse dates only if present and valid
+  let createdAt = project.created_at ? new Date(project.created_at) : null;
   return (
     <>
       <div className="dashboard-navbar">
-        <button className="dashboard-menu-btn" style={{visibility: 'hidden'}}>☰</button>
+        <button className="dashboard-menu-btn" onClick={onBack} aria-label="Back">←</button>
       </div>
       <div className="dashboard-split-container" style={{flexDirection: 'column', maxWidth: 700}}>
         <div className="project-detail-header-row">
@@ -17,15 +19,17 @@ const ProjectDetail = ({ project, onEdit, onDelete, onViewFiles }) => {
           </div>
         </div>
         <div className="project-detail-info">
-          <div><b>Project ID:</b> {project.id}</div>
           <div><b>Name:</b> {project.name}</div>
-          <div><b>Created At:</b> {new Date(project.created_at).toLocaleString()}</div>
-          <div><b>Last Updated:</b> {new Date(project.updated_at).toLocaleString()}</div>
+          <div><b>Created At:</b> {createdAt ? createdAt.toLocaleString() : "-"}</div>
         </div>
         <div style={{marginTop: '2.5rem'}}>
           <h3 style={{marginBottom: '1rem'}}>Files in this Project</h3>
           <div style={{display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center'}}>
-            <div className="empty-msg">No files to display.</div>
+            {files && files.length > 0 ? (
+              files.map(file => <FileIcon key={file.id} filename={file.filename} language={file.language} />)
+            ) : (
+              <div className="empty-msg">No files to display.</div>
+            )}
           </div>
         </div>
       </div>

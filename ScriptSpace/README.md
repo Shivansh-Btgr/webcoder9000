@@ -54,14 +54,14 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 ### Projects
 - `GET    /api/projects/`                      — List all projects for the authenticated user
 - `POST   /api/projects/` ✅                     — Create a new project
-- `GET    /api/projects/<id>/` ✅                — Retrieve a specific project (owner only)
-- `PUT    /api/projects/<id>/` ✅                — Update/rename a project (owner only)
-- `PATCH  /api/projects/<id>/` ✅                — Partially update a project (owner only)
-- `DELETE /api/projects/<id>/` ✅                — Delete a project (owner only)
+- `GET    /api/projects/<id>/`                — Retrieve a specific project (owner only)
+- `PUT    /api/projects/<id>/`                 — Update/rename a project (owner only)
+- `PATCH  /api/projects/<id>/`                 — Partially update a project (owner only)
+- `DELETE /api/projects/<id>/`                 — Delete a project (owner only)
 
 ### Files
 - `GET    /api/files/`                         — List all files for the authenticated user
-- `GET    /api/files/?project=<id>`  ✅          — List all files belonging to a specific project
+- `GET    /api/files/?project=<id>`            — List all files belonging to a specific project (for the authenticated user; only files from that project will be returned)
 - `POST   /api/files/`               ✅          — Create a new file (must specify project)
 - `GET    /api/files/<id>/`          ✅          — Retrieve a specific file (owner only)
 - `PUT    /api/files/<id>/`          ✅          — Update file content (owner only)

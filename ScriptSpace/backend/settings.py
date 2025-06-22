@@ -151,3 +151,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     'http://localhost:3000',
 #     'https://your-frontend-domain.com',
 # ]
+
+# --- TEMPORARY: Prevent JWT tokens from expiring during frontend development ---
+try:
+    from .simplejwt_dev_settings import SIMPLE_JWT
+except ImportError:
+    pass
