@@ -47,8 +47,9 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 - `POST   /api/users/login/`                 — Obtain JWT token (login)
 - `POST   /api/users/logout/`                  — Logout (blacklist refresh token)
 - `GET    /api/users/me/`                     — Get current authenticated user's info (JWT required)
-- `POST   /api/users/password-reset/` ✅         — Request a password reset (send email with link)
-- `POST   /api/users/password-reset-confirm/`✅  — Confirm password reset (provide `uid`, `token`, `new_password`)
+- `POST   /api/users/password-reset/`          — Request a password reset (send email with link)
+- `POST   /api/users/password-reset-confirm/`  — Confirm password reset (provide `uid`, `token`, `new_password`)
+- `POST   /api/users/change-password/`         — Change password (old and new password; JWT required)
 - `PATCH  /api/users/update/`                  — Update current user's profile (username, email, first_name, last_name; JWT required)
 
 ### Projects

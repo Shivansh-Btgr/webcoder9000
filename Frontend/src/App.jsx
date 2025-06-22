@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RegisterForm from "./components/auth/RegisterForm";
 import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -8,6 +8,9 @@ import EditProject from "./components/project/EditProject";
 import CreateProject from "./components/project/CreateProject";
 import FileDetail from "./components/file/FileDetail";
 import CreateFile from "./components/file/CreateFile";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
+import ChangePassword from "./components/auth/ChangePassword";
 
 const App = () => {
   const [page, setPage] = useState("login");
@@ -20,6 +23,12 @@ const App = () => {
   const [creatingProject, setCreatingProject] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [creatingFile, setCreatingFile] = useState(false);
+
+  useEffect(() => {
+    if (window.location.pathname === "/reset-password") {
+      setPage("reset-password");
+    }
+  }, []);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -367,6 +376,10 @@ const App = () => {
     );
   }
 
+  if (page === "change-password") {
+    return <ChangePassword onBack={() => setPage("dashboard")} />;
+  }
+
   if (page === "dashboard" && dashboardData) {
     return (
       <Dashboard
@@ -374,7 +387,7 @@ const App = () => {
         files={dashboardData.files}
         onLogout={handleLogout}
         onMenu={() => {}}
-        onChangePassword={() => alert("Change Password")}
+        onChangePassword={() => setPage("change-password")}
         onEditProfile={handleEditProfile}
         onCreateProject={handleCreateProject}
         onProjectClick={handleProjectClick}
@@ -387,12 +400,21 @@ const App = () => {
     return <RegisterForm onSwitchToLogin={() => setPage("login")} />;
   }
 
+  if (page === "forgot-password") {
+    return <ForgotPassword onSwitchToLogin={() => setPage("login")} />;
+  }
+
+  if (page === "reset-password") {
+    return <ResetPassword onBackToLogin={() => setPage("login")} />;
+  }
+
   // Login page
   return (
     <LoginForm
       onSwitchToRegister={() => setPage("register")}
-      onSwitchToForgot={() => alert("Forgot Password")}
+      onSwitchToForgot={() => setPage("forgot-password")}
       onLoginSuccess={handleLoginSuccess}
+      onSwitchToResetPassword={() => setPage("reset-password")}
     />
   );
 };

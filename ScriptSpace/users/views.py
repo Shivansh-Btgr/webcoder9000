@@ -14,7 +14,7 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParamete
 from .serializers import (
     RegisterSerializer, CurrentUserSerializer,
     PasswordResetRequestSerializer, PasswordResetConfirmSerializer,
-    UserUpdateSerializer
+    UserUpdateSerializer, ChangePasswordSerializer
 )
 
 # Create your views here.
@@ -62,7 +62,7 @@ class PasswordResetRequestView(APIView):
                 return Response({'detail': 'If the email exists, a reset link will be sent.'}, status=status.HTTP_200_OK)
             token = PasswordResetTokenGenerator().make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_link = f"https://your-frontend-domain/reset-password?uid={uid}&token={token}"
+            reset_link = f"http://localhost:5173/reset-password?uid={uid}&token={token}"
             send_mail(
                 'Password Reset Request',
                 f'Click the link to reset your password: {reset_link}',
@@ -103,3 +103,18 @@ class UserUpdateView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+@extend_schema(tags=["Password Reset"], summary="Change password", description="Change the current user's password (JWT required)")
+class ChangePasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        if not user.check_password(serializer.validated_data['old_password']):
+            return Response({'old_password': 'Wrong password.'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
