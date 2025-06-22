@@ -1,7 +1,7 @@
 import React from "react";
 import FileIcon from "../file/FileIcon";
 
-const ProjectDetail = ({ project, files, onEdit, onDelete, onBack, onCreateFile }) => {
+const ProjectDetail = ({ project, files, onEdit, onDelete, onBack, onCreateFile, onFileClick }) => {
   if (!project) return <div className="dashboard-split-container"><div className="empty-msg">Project not found.</div></div>;
   // Defensive: parse dates only if present and valid
   let createdAt = project.created_at ? new Date(project.created_at) : null;
@@ -27,7 +27,7 @@ const ProjectDetail = ({ project, files, onEdit, onDelete, onBack, onCreateFile 
           <h3 style={{marginBottom: '1rem'}}>Files in this Project</h3>
           <div style={{display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center'}}>
             {files && files.length > 0 ? (
-              files.map(file => <FileIcon key={file.id} filename={file.filename} language={file.language} />)
+              files.map(file => <FileIcon key={file.id} id={file.id} filename={file.filename} language={file.language} onClick={() => onFileClick(file)} />)
             ) : (
               <div className="empty-msg">No files to display.</div>
             )}

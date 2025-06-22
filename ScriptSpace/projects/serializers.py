@@ -11,7 +11,7 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
         fields = ['id', 'project', 'filename', 'content', 'language', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'project', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 class RunSavedFileSerializer(serializers.Serializer):
     file_id = serializers.IntegerField()

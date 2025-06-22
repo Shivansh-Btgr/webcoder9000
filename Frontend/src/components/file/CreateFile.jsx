@@ -18,14 +18,15 @@ const themeOptions = [
   { value: "solarized-dark", label: "Solarized Dark (if available)" },
 ];
 
-const CreateFile = ({ onBack, projects = [{ id: 1, name: "My First Project" }] }) => {
-  const [projectId, setProjectId] = useState(projects[0]?.id || "");
+const CreateFile = ({ onBack, onCreate, projectId }) => {
   const [filename, setFilename] = useState("");
   const [content, setContent] = useState("");
   const [language, setLanguage] = useState(languageOptions[0]);
   const [theme, setTheme] = useState(themeOptions[0]);
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Dummy run handler (replace with real API call for actual execution)
   const handleRun = () => {
@@ -37,23 +38,43 @@ const CreateFile = ({ onBack, projects = [{ id: 1, name: "My First Project" }] }
     }, 1000);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch("/api/files/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`,
+        },
+        body: JSON.stringify({
+          project: projectId,
+          filename,
+          content,
+          language: language.value,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.detail || "Failed to create file");
+        setLoading(false);
+        return;
+      }
+      const created = await res.json();
+      onCreate && onCreate(created);
+    } catch (err) {
+      setError("Network error");
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-container" style={{ maxWidth: 900 }}>
       <h2 className="form-title">Create New File</h2>
-      <form action="#" className="login-form" onSubmit={e => e.preventDefault()}>
-        <div className="input-wrapper">
-          <select
-            className="input-field"
-            value={projectId}
-            onChange={e => setProjectId(e.target.value)}
-            required
-          >
-            {projects.map(p => (
-              <option key={p.id} value={p.id}>{p.name} (ID: {p.id})</option>
-            ))}
-          </select>
-          <i className="material-symbols-rounded">folder</i>
-        </div>
+      <form action="#" className="login-form" onSubmit={handleSubmit}>
         <div className="input-wrapper">
           <input
             type="text"
@@ -118,7 +139,8 @@ const CreateFile = ({ onBack, projects = [{ id: 1, name: "My First Project" }] }
         >
           {running ? "Running..." : "Run"}
         </button>
-        <button type="submit" className="login-button">Create File</button>
+        <button type="submit" className="login-button" disabled={loading}>{loading ? "Creating..." : "Create File"}</button>
+        {error && <div className="error-msg" style={{marginTop:8}}>{error}</div>}
       </form>
       <div className="signup-prompt" style={{textAlign: 'center', marginTop: '1.5rem'}}>
         <a href="#" className="signup-link" onClick={e => { e.preventDefault(); onBack && onBack(); }}>Back</a>

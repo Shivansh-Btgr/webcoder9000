@@ -6,6 +6,8 @@ import EditProfile from "./components/auth/EditProfile";
 import ProjectDetail from "./components/project/ProjectDetail";
 import EditProject from "./components/project/EditProject";
 import CreateProject from "./components/project/CreateProject";
+import FileDetail from "./components/file/FileDetail";
+import CreateFile from "./components/file/CreateFile";
 
 const App = () => {
   const [page, setPage] = useState("login");
@@ -16,6 +18,8 @@ const App = () => {
   const [loadingProjectFiles, setLoadingProjectFiles] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [creatingProject, setCreatingProject] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [creatingFile, setCreatingFile] = useState(false);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -169,6 +173,12 @@ const App = () => {
         const projects = prev.projects.filter(p => p.id !== selectedProject.id);
         return { ...prev, projects };
       });
+      // Fetch updated files after project deletion
+      const filesRes = await fetch("/api/files/", {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      const files = filesRes.ok ? await filesRes.json() : [];
+      setDashboardData(prev => prev ? { ...prev, files } : prev);
       setSelectedProject(null);
       setProjectFiles([]);
       setPage("dashboard");
@@ -191,6 +201,83 @@ const App = () => {
     });
     setCreatingProject(false);
     setPage("dashboard");
+  };
+
+  // Handler for clicking a file icon
+  const handleFileClick = async (file) => {
+    setSelectedFile(null);
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`/api/files/${file.id}/`, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      const fileData = await res.json();
+      setSelectedFile(fileData);
+      setPage("file-detail");
+    } catch (err) {
+      setSelectedFile(null);
+      alert("Failed to load file details.");
+    }
+  };
+
+  // Handler for going back from file detail
+  const handleBackToProjectOrDashboard = () => {
+    setSelectedFile(null);
+    if (selectedProject) setPage("project-detail");
+    else setPage("dashboard");
+  };
+
+  // Handler for creating a file in a project
+  const handleCreateFile = () => {
+    setCreatingFile(true);
+    setPage("create-file");
+  };
+
+  // Handler for after file is created
+  const handleFileCreated = (newFile) => {
+    // Add to projectFiles and dashboardData.files
+    setProjectFiles(prev => [newFile, ...prev]);
+    setDashboardData(prev => {
+      if (!prev) return prev;
+      return { ...prev, files: [newFile, ...prev.files] };
+    });
+    setCreatingFile(false);
+    setPage("project-detail");
+  };
+
+  // Handler for deleting a file
+  const handleDeleteFile = async () => {
+    if (!selectedFile) return;
+    if (!window.confirm("Are you sure you want to delete this file? This cannot be undone.")) return;
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`/api/files/${selectedFile.id}/`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      if (!res.ok) {
+        alert("Failed to delete file.");
+        return;
+      }
+      // After deletion, refresh files for dashboard
+      const filesRes = await fetch("/api/files/", {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      const files = filesRes.ok ? await filesRes.json() : [];
+      setDashboardData(prev => prev ? { ...prev, files } : prev);
+      setSelectedFile(null);
+      setPage("dashboard");
+    } catch (err) {
+      alert("Network error while deleting file.");
+    }
   };
 
   if (page === "edit-profile" && user) {
@@ -225,6 +312,16 @@ const App = () => {
     );
   }
 
+  if (page === "create-file" && creatingFile && selectedProject) {
+    return (
+      <CreateFile
+        onBack={() => { setCreatingFile(false); setPage("project-detail"); }}
+        onCreate={handleFileCreated}
+        projectId={selectedProject.id}
+      />
+    );
+  }
+
   if (page === "project-detail" && selectedProject) {
     return (
       <ProjectDetail
@@ -233,7 +330,19 @@ const App = () => {
         onEdit={handleEditProject}
         onDelete={handleDeleteProject}
         onBack={handleBackToDashboard}
-        onCreateFile={() => alert("Create File")}
+        onCreateFile={handleCreateFile}
+        onFileClick={handleFileClick}
+      />
+    );
+  }
+
+  if (page === "file-detail" && selectedFile) {
+    return (
+      <FileDetail
+        file={selectedFile}
+        onEdit={() => alert("Edit File")}
+        onDelete={handleDeleteFile}
+        onBack={handleBackToProjectOrDashboard}
       />
     );
   }
@@ -249,6 +358,7 @@ const App = () => {
         onEditProfile={handleEditProfile}
         onCreateProject={handleCreateProject}
         onProjectClick={handleProjectClick}
+        onFileClick={handleFileClick}
       />
     );
   }

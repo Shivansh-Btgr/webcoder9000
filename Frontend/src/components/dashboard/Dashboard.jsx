@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ProjectIcon from "../project/ProjectIcon";
 import FileIcon from "../file/FileIcon";
 
-const Dashboard = ({ projects = [], files = [], onCreateProject, onMenu, onLogout, onChangePassword, onEditProfile, onProjectClick }) => {
+const Dashboard = ({ projects = [], files = [], onCreateProject, onMenu, onLogout, onChangePassword, onEditProfile, onProjectClick, onFileClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -60,7 +60,7 @@ const Dashboard = ({ projects = [], files = [], onCreateProject, onMenu, onLogou
               <div className="empty-msg">No files found.</div>
             ) : (
               files.map(file => (
-                <FileIcon key={file.id} filename={file.filename} language={file.language} />
+                <FileIcon key={file.id} id={file.id} filename={file.filename} language={file.language} onClick={() => onFileClick(file)} />
               ))
             )}
           </div>
