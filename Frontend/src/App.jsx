@@ -2,10 +2,12 @@ import { useState } from "react";
 import RegisterForm from "./components/auth/RegisterForm";
 import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./components/dashboard/Dashboard";
+import EditProfile from "./components/auth/EditProfile";
 
 const App = () => {
   const [page, setPage] = useState("login");
   const [dashboardData, setDashboardData] = useState(null);
+  const [user, setUser] = useState(null);
 
   // Handler for successful login: fetch dashboard data
   const handleLoginSuccess = async (accessToken) => {
@@ -60,6 +62,43 @@ const App = () => {
     setPage("login");
   };
 
+  // Handler for Edit Profile button
+  const handleEditProfile = async () => {
+    const access = localStorage.getItem("access_token");
+    if (!access) {
+      setPage("login");
+      return;
+    }
+    try {
+      const res = await fetch("/api/users/me/", {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      const userData = await res.json();
+      setUser(userData);
+      setPage("edit-profile");
+    } catch (err) {
+      setUser(null);
+      setPage("dashboard");
+    }
+  };
+
+  if (page === "edit-profile" && user) {
+    return (
+      <EditProfile
+        user={user}
+        onSave={(updatedUser) => {
+          setUser(updatedUser);
+          setPage("dashboard");
+        }}
+        onCancel={() => setPage("dashboard")}
+      />
+    );
+  }
+
   if (page === "dashboard" && dashboardData) {
     return (
       <Dashboard
@@ -68,6 +107,7 @@ const App = () => {
         onLogout={handleLogout}
         onMenu={() => {}}
         onChangePassword={() => alert("Change Password")}
+        onEditProfile={handleEditProfile}
         onCreateProject={() => alert("Create Project")}
         onCreateFile={() => alert("Create File")}
       />

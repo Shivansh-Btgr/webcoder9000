@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ProjectIcon from "../project/ProjectIcon";
 import FileIcon from "../file/FileIcon";
 
-const Dashboard = ({ projects = [], files = [], onCreateProject, onCreateFile, onMenu, onLogout, onChangePassword }) => {
+const Dashboard = ({ projects = [], files = [], onCreateProject, onCreateFile, onMenu, onLogout, onChangePassword, onEditProfile }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -27,6 +27,7 @@ const Dashboard = ({ projects = [], files = [], onCreateProject, onCreateFile, o
         <div className="dashboard-navbar-options-wrapper" ref={menuRef}>
           {menuOpen && (
             <div className="dashboard-navbar-options">
+              <button onClick={onEditProfile} className="dashboard-navbar-option">Edit Profile</button>
               <button onClick={onChangePassword} className="dashboard-navbar-option">Change Password</button>
               <button onClick={onLogout} className="dashboard-navbar-option">Logout</button>
             </div>

@@ -46,12 +46,13 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 - `POST   /api/users/register/`                — Register a new user
 - `POST   /api/users/login/`                 — Obtain JWT token (login)
 - `POST   /api/users/logout/`                  — Logout (blacklist refresh token)
-- `GET    /api/users/me/`      ✅               — Get current authenticated user's info (JWT required)
+- `GET    /api/users/me/`                     — Get current authenticated user's info (JWT required)
 - `POST   /api/users/password-reset/` ✅         — Request a password reset (send email with link)
 - `POST   /api/users/password-reset-confirm/`✅  — Confirm password reset (provide `uid`, `token`, `new_password`)
+- `PATCH  /api/users/update/`                  — Update current user's profile (username, email, first_name, last_name; JWT required)
 
 ### Projects
-- `GET    /api/projects/` ✅                     — List all projects for the authenticated user
+- `GET    /api/projects/`                      — List all projects for the authenticated user
 - `POST   /api/projects/` ✅                     — Create a new project
 - `GET    /api/projects/<id>/` ✅                — Retrieve a specific project (owner only)
 - `PUT    /api/projects/<id>/` ✅                — Update/rename a project (owner only)
@@ -59,7 +60,7 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 - `DELETE /api/projects/<id>/` ✅                — Delete a project (owner only)
 
 ### Files
-- `GET    /api/files/`               ✅          — List all files for the authenticated user
+- `GET    /api/files/`                         — List all files for the authenticated user
 - `GET    /api/files/?project=<id>`  ✅          — List all files belonging to a specific project
 - `POST   /api/files/`               ✅          — Create a new file (must specify project)
 - `GET    /api/files/<id>/`          ✅          — Retrieve a specific file (owner only)

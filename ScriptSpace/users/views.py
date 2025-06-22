@@ -13,7 +13,8 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParamete
 
 from .serializers import (
     RegisterSerializer, CurrentUserSerializer,
-    PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+    PasswordResetRequestSerializer, PasswordResetConfirmSerializer,
+    UserUpdateSerializer
 )
 
 # Create your views here.
@@ -94,3 +95,11 @@ class PasswordResetConfirmView(APIView):
             else:
                 return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@extend_schema(tags=["User"], summary="Update current user profile", description="Update the authenticated user's profile information (username, email, first_name, last_name).")
+class UserUpdateView(generics.UpdateAPIView):
+    serializer_class = UserUpdateSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
