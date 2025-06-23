@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "../common/InputField";
 import Editor from "@monaco-editor/react";
 import Select from "react-select";
+import * as monaco from "monaco-editor";
 
 const languageOptions = [
   { value: "python", label: "Python" },
@@ -26,6 +27,69 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
     { value: "hc-black", label: "High Contrast Black" },
     { value: "hc-light", label: "High Contrast Light" },
   ];
+
+  // Dynamically import monaco-python for better Python support
+  useEffect(() => {
+    if (window.monaco && !window.monacoPythonLoaded) {
+      import('monaco-python')
+        .then((monacoPython) => {
+          monacoPython.loadPyodide({
+            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/"
+          });
+          window.monacoPythonLoaded = true;
+        })
+        .catch((err) => {
+          // Fail gracefully if monaco-python is not available
+          console.warn('monaco-python could not be loaded:', err);
+        });
+    }
+  }, []);
+
+  // Monaco Linting/Autocorrect setup
+  function handleEditorWillMount(monacoInstance) {
+    // JavaScript/TypeScript: Enable diagnostics and suggestions
+    monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+      diagnosticCodesToIgnore: [],
+    });
+    monacoInstance.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+      diagnosticCodesToIgnore: [],
+    });
+
+    // Python: Enable advanced Monaco Python worker if available
+    if (monacoInstance.languages.python && monacoInstance.languages.python.pythonDefaults) {
+      monacoInstance.languages.python.pythonDefaults.setDiagnosticsOptions({
+        enabled: true,
+        linting: true,
+        pyright: true, // If monaco-python/pyright is loaded, this will enable type checking
+      });
+    }
+
+    // C++: Enable basic validation and suggestions (Monaco default)
+    if (monacoInstance.languages.cpp && monacoInstance.languages.cpp.cppDefaults) {
+      monacoInstance.languages.cpp.cppDefaults.setDiagnosticsOptions({
+        enabled: true
+      });
+    }
+
+    // Java: Enable basic validation and suggestions (Monaco default)
+    if (monacoInstance.languages.java && monacoInstance.languages.java.javaDefaults) {
+      monacoInstance.languages.java.javaDefaults.setDiagnosticsOptions({
+        enabled: true
+      });
+    }
+
+    // Enable quick suggestions/autocorrect for all languages
+    monacoInstance.editor.defineTheme('custom-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {},
+    });
+  }
 
   return (
     <div className="login-container" style={{ maxWidth: 900 }}>
@@ -65,7 +129,21 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
             value={content}
             theme={editorTheme}
             onChange={value => setContent(value)}
-            options={{ fontSize: 16, minimap: { enabled: false } }}
+            beforeMount={handleEditorWillMount}
+            options={{
+              fontSize: 16,
+              minimap: { enabled: false },
+              quickSuggestions: true,
+              suggestOnTriggerCharacters: true,
+              wordBasedSuggestions: true,
+              tabCompletion: 'on',
+              formatOnType: true,
+              formatOnPaste: true,
+              autoClosingBrackets: 'always',
+              autoClosingQuotes: 'always',
+              autoIndent: 'full',
+              // You can add more Monaco options for autocorrect/linting here
+            }}
           />
         </div>
         <div style={{marginBottom: 0, width: '100%', display: 'flex', flexDirection: 'column'}}>
