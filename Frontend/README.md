@@ -1,4 +1,4 @@
-# theIDEproject Frontend
+# WebCoder9000 Vibe Coded Frontend
 
 ## Features
 - Modern React SPA with Vite
@@ -55,6 +55,3 @@ npm run dev
 - All sensitive config (like Google Client ID) is managed via `.env` and Vite env variables.
 - Only Google login is enabled (no Apple/GitHub).
 - For backend endpoints, see `/api/auth/social/login/`, `/api/users/login/`, `/api/files/`, etc.
-
----
-Happy coding!
