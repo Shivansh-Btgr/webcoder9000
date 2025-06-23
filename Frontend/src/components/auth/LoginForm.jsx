@@ -37,7 +37,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToForgot, onLoginSuccess }) => 
     <div className="login-container">
       {error && <div className="error-message" style={{ marginBottom: 16 }}>{error}</div>}
       <h2 className="form-title">Log in with</h2>
-      <SocialLogin />
+      <SocialLogin onLogin={onLoginSuccess} />
 
       <p className="separator"><span>or</span></p>
 

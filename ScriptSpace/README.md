@@ -73,6 +73,22 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 - `POST   /api/run-file/`                      — Run a saved file (provide `file_id`)
 - `POST   /api/execute/`                       — Run code snippet (provide `code`, `language`, optional `input`)
 
+### Social Authentication (Google & GitHub)
+- `POST   /api/auth/social/login/`             — Login/register with Google or GitHub OAuth2 token
+- `GET    /api/auth/social/`                   — Provider discovery/callbacks (for OAuth2 flows)
+- `POST   /api/auth/registration/`             — Social registration (if enabled)
+
+**How to use:**
+- Obtain an OAuth2 token from Google or GitHub on the frontend.
+- Send it to `/api/auth/social/login/` with:
+  ```json
+  {
+    "provider": "google", // or "github"
+    "access_token": "<oauth2_token>"
+  }
+  ```
+- Backend will authenticate or create the user and return JWT tokens.
+
 ### API Documentation
 - `GET    /api/docs/`                          — Swagger/OpenAPI interactive docs
 - `GET    /api/schema/`                       — Raw OpenAPI schema (JSON)

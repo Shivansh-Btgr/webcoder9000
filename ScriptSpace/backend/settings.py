@@ -39,15 +39,36 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'users',
     'executor',
     'projects',
     'corsheaders',
     'drf_spectacular',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
 ]
 
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    },
+    'github': {
+        'SCOPE': ['user', 'email'],
+    },
+}
+
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Add this line at the top
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -126,6 +148,8 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'ScriptSpace API',
     'DESCRIPTION': 'API documentation for ScriptSpace backend',
     'VERSION': '1.0.0',
+    'SCHEMA_PATH_PREFIX': r'/api/',  # Only include endpoints under /api/
+    'SERVE_INCLUDE_SCHEMA': False,  # Do not include the schema endpoint in the docs
 }
 
 TEMPLATES = [

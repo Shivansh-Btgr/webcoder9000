@@ -12,8 +12,8 @@ from django.conf import settings
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 
 from .serializers import (
-    RegisterSerializer, CurrentUserSerializer,
-    PasswordResetRequestSerializer, PasswordResetConfirmSerializer,
+    CustomRegisterSerializer, CurrentUserSerializer,
+    CustomPasswordResetRequestSerializer, CustomPasswordResetConfirmSerializer,
     UserUpdateSerializer, ChangePasswordSerializer
 )
 
@@ -23,7 +23,7 @@ from .serializers import (
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
-    serializer_class = RegisterSerializer
+    serializer_class = CustomRegisterSerializer
 
 @extend_schema(tags=["Authentication"], summary="Logout user", description="Blacklist a refresh token to log out the user.")
 class LogoutView(APIView):
@@ -51,9 +51,9 @@ class CurrentUserView(APIView):
 @extend_schema(tags=["Password Reset"], summary="Request password reset", description="Request a password reset email for a user.")
 class PasswordResetRequestView(APIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = PasswordResetRequestSerializer
+    serializer_class = CustomPasswordResetRequestSerializer
     def post(self, request):
-        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer = CustomPasswordResetRequestSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
             try:
@@ -76,24 +76,23 @@ class PasswordResetRequestView(APIView):
 @extend_schema(tags=["Password Reset"], summary="Confirm password reset", description="Reset the user's password using the token sent by email.")
 class PasswordResetConfirmView(APIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = PasswordResetConfirmSerializer
+    serializer_class = CustomPasswordResetConfirmSerializer
     def post(self, request):
-        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer = CustomPasswordResetConfirmSerializer(data=request.data)
         if serializer.is_valid():
             uid = serializer.validated_data['uid']
             token = serializer.validated_data['token']
             new_password = serializer.validated_data['new_password']
             try:
-                uid_int = force_str(urlsafe_base64_decode(uid))
-                user = User.objects.get(pk=uid_int)
-            except (User.DoesNotExist, ValueError, TypeError):
-                return Response({'detail': 'Invalid link.'}, status=status.HTTP_400_BAD_REQUEST)
-            if PasswordResetTokenGenerator().check_token(user, token):
-                user.set_password(new_password)
-                user.save()
-                return Response({'detail': 'Password has been reset.'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+                uid = force_str(urlsafe_base64_decode(uid))
+                user = User.objects.get(pk=uid)
+            except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+                return Response({'error': 'Invalid UID'}, status=status.HTTP_400_BAD_REQUEST)
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response({'error': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(new_password)
+            user.save()
+            return Response({'detail': 'Password has been reset.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @extend_schema(tags=["User"], summary="Update current user profile", description="Update the authenticated user's profile information (username, email, first_name, last_name).")

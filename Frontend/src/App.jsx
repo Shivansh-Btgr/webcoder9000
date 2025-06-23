@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import RegisterForm from "./components/auth/RegisterForm";
 import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -23,6 +24,8 @@ const App = () => {
   const [creatingProject, setCreatingProject] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [creatingFile, setCreatingFile] = useState(false);
+
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   useEffect(() => {
     if (window.location.pathname === "/reset-password") {
@@ -410,12 +413,14 @@ const App = () => {
 
   // Login page
   return (
-    <LoginForm
-      onSwitchToRegister={() => setPage("register")}
-      onSwitchToForgot={() => setPage("forgot-password")}
-      onLoginSuccess={handleLoginSuccess}
-      onSwitchToResetPassword={() => setPage("reset-password")}
-    />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <LoginForm
+        onSwitchToRegister={() => setPage("register")}
+        onSwitchToForgot={() => setPage("forgot-password")}
+        onLoginSuccess={handleLoginSuccess}
+        onSwitchToResetPassword={() => setPage("reset-password")}
+      />
+    </GoogleOAuthProvider>
   );
 };
 
