@@ -1,4 +1,4 @@
-# theIDEproject
+# WebCoder9000
 
 A modern, full-stack Online IDE for collaborative coding, code execution, and project management—right in your browser.
 
@@ -19,7 +19,7 @@ A modern, full-stack Online IDE for collaborative coding, code execution, and pr
 
 ## 🛠️ Technology Stack
 - **Backend:** Django, Django REST Framework, Docker
-- **Frontend:** React.js (SPA, Vite), Monaco Editor
+- **Frontend:** React.js (SPA, Vite), Monaco Editor and vibe coding
 - **Database:** SQLite (dev), PostgreSQL (recommended for production)
 - **Authentication:** JWT (SimpleJWT)
 
