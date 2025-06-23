@@ -214,10 +214,18 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
             style={{padding: '0.5rem 1rem', borderRadius: 6, border: '1px solid #333', fontSize: 15, background: '#23272f', color: '#fff', marginBottom: 0}}
           />
         </div>
+        <div style={{ width: '100%', background: '#18191c', color: '#fff', borderRadius: 6, padding: '0.7rem 1rem', minHeight: 50, fontFamily: 'monospace', fontSize: 15, marginTop: 16, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+          {output ? output.split('\n').map((line, idx) => (
+            <React.Fragment key={idx}>
+              {line}
+              {idx !== output.split('\n').length - 1 && <br />}
+            </React.Fragment>
+          )) : <span style={{ color: '#888' }}>Output will appear here</span>}
+        </div>
         <button
           type="button"
           className="login-button"
-          style={{marginTop: 16, marginBottom: 0, background: '#2563eb', color: '#fff', fontWeight: 600, fontSize: 16, borderRadius: 6, border: 'none', cursor: 'pointer', width: '100%'}}
+          style={{marginTop: 24, marginBottom: 0, background: '#2563eb', color: '#fff', fontWeight: 600, fontSize: 16, borderRadius: 6, border: 'none', cursor: 'pointer', width: '100%'}}
           onClick={async () => {
             setLoading(true);
             setOutput("");
@@ -236,17 +244,29 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
                   input: runInput,
                 }),
               });
+              let data;
+              try {
+                data = await res.json();
+              } catch (e) {
+                data = await res.text();
+              }
               if (!res.ok) {
-                setOutput("Failed to execute file.");
+                setOutput(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
                 setLoading(false);
                 return;
               }
-              const data = await res.json();
-              let formatted = "";
-              if (data.stdout) formatted += `Stdout:\n${data.stdout}`;
-              if (data.stderr) formatted += `\nStderr:\n${data.stderr}`;
-              if (typeof data.exit_code !== 'undefined') formatted += `\nExit Code: ${data.exit_code}`;
-              setOutput(formatted.trim() || JSON.stringify(data));
+              // Format output for known structure
+              if (typeof data === 'object' && data !== null && ('stdout' in data || 'stderr' in data || 'exit_code' in data)) {
+                let formatted = '';
+                if (data.stdout) formatted += `Stdout:\n${data.stdout}`;
+                if (data.stderr) formatted += `\nStderr:\n${data.stderr}`;
+                if (typeof data.exit_code !== 'undefined') formatted += `\nExit Code: ${data.exit_code}`;
+                setOutput(formatted.trim());
+              } else if (typeof data === 'object') {
+                setOutput(JSON.stringify(data, null, 2));
+              } else {
+                setOutput(data);
+              }
               setLoading(false);
             } catch (err) {
               setOutput("Network error");
@@ -256,14 +276,6 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
         >
           Run
         </button>
-        <div style={{ width: '100%', background: '#18191c', color: '#fff', borderRadius: 6, padding: '0.7rem 1rem', minHeight: 50, fontFamily: 'monospace', fontSize: 15, marginTop: 16, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-          {output ? output.split('\n').map((line, idx) => (
-            <React.Fragment key={idx}>
-              {line}
-              {idx !== output.split('\n').length - 1 && <br />}
-            </React.Fragment>
-          )) : <span style={{ color: '#888' }}>Output will appear here</span>}
-        </div>
         <button
           type="button"
           className="login-button"
