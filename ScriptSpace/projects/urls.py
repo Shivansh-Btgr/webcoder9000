@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     ProjectListCreateView, ProjectDetailView,
     FileListCreateView, FileDetailView,
-    RunSavedFileView
+    RunSavedFileView, FileShareLinkView, ImportSharedFileView
 )
 
 urlpatterns = [
@@ -11,4 +11,6 @@ urlpatterns = [
     path('files/', FileListCreateView.as_view(), name='file-list-create'),
     path('files/<int:pk>/', FileDetailView.as_view(), name='file-detail'),
     path('run-file/', RunSavedFileView.as_view(), name='run-saved-file'),
+    path('files/<int:pk>/share/', FileShareLinkView.as_view(), name='file-share-link'),
+    path('files/import-shared/', ImportSharedFileView.as_view(), name='import-shared-file'),
 ]

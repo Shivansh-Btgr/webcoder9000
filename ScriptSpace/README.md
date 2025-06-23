@@ -83,11 +83,20 @@ All authentication is handled via JWT tokens using SimpleJWT. Obtain a token via
 - Send it to `/api/auth/social/login/` with:
   ```json
   {
-    "provider": "google", // or "github"
+    "provider": "google",
     "access_token": "<oauth2_token>"
   }
   ```
 - Backend will authenticate or create the user and return JWT tokens.
+
+### File Sharing & Import
+- `POST   /api/files/<id>/share/`                — Generate or retrieve a shareable link (UUID) for a file you own
+- `POST   /api/files/import-shared/?share_uuid=<uuid>&project=<project_id>` — Import a shared file into your project (creates a copy; JWT required)
+
+**How to use:**
+- To share a file, call the share endpoint for your file. You’ll get a `share_uuid`.
+- Give the share link (the UUID) to another user.
+- The other user (must be logged in) can import the file into one of their projects by calling the import endpoint with the `share_uuid` and their target `project` ID. This creates a new, independent copy of the file in their project.
 
 ### API Documentation
 - `GET    /api/docs/`                          — Swagger/OpenAPI interactive docs

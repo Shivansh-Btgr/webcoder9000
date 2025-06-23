@@ -21,6 +21,9 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
   const [editorTheme, setEditorTheme] = useState("vs-dark");
   const [output, setOutput] = useState("");
   const [runInput, setRunInput] = useState("");
+  const [shareUUID, setShareUUID] = useState("");
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareError, setShareError] = useState("");
   const themes = [
     { value: "vs-dark", label: "Dark" },
     { value: "vs-light", label: "Light" },
@@ -91,11 +94,66 @@ const FileDetail = ({ file, onBack, onSave, onEdit, onDelete }) => {
     });
   }
 
+  const handleShare = async () => {
+    setShareLoading(true);
+    setShareError("");
+    setShareUUID("");
+    const access = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`/api/files/${file.id}/share/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok && data.share_uuid) {
+        setShareUUID(data.share_uuid);
+      } else {
+        setShareError("Failed to get share UUID");
+      }
+    } catch (err) {
+      setShareError("Network error");
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
   return (
     <div className="login-container" style={{ maxWidth: 900 }}>
       <h2 className="form-title">File Details</h2>
       <div className="project-detail-header-row" style={{marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <div style={{fontWeight: 600, fontSize: 18}}>{name}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{fontWeight: 600, fontSize: 18}}>{name}</div>
+          <button
+            type="button"
+            className="share-btn"
+            style={{ marginLeft: 12, padding: '0.2rem 0.7rem', fontSize: 13, borderRadius: 5, background: '#f3f4f6', border: '1px solid #d1d5db', color: '#2563eb', fontWeight: 600, cursor: 'pointer' }}
+            onClick={handleShare}
+            disabled={shareLoading}
+          >
+            {shareLoading ? 'Sharing...' : 'Share File'}
+          </button>
+          {shareUUID && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 10 }}>
+              <span style={{ fontSize: 13, color: '#2563eb', fontWeight: 600 }}>Share UUID:</span>
+              <input
+                type="text"
+                value={shareUUID}
+                readOnly
+                style={{ fontSize: 13, padding: '0.2rem 0.5rem', borderRadius: 4, border: '1px solid #d1d5db', width: 240, background: '#f9fafb', color: '#222' }}
+              />
+              <button
+                type="button"
+                style={{ fontSize: 13, padding: '0.2rem 0.7rem', borderRadius: 4, background: '#2563eb', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+                onClick={() => { navigator.clipboard.writeText(shareUUID); }}
+              >
+                Copy
+              </button>
+            </div>
+          )}
+        </div>
         <div>
           {onDelete && <button className="delete-btn" onClick={onDelete}>Delete File</button>}
         </div>

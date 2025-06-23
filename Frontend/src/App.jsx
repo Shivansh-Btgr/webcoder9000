@@ -12,6 +12,7 @@ import CreateFile from "./components/file/CreateFile";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ResetPassword from "./components/auth/ResetPassword";
 import ChangePassword from "./components/auth/ChangePassword";
+import ImportFile from "./components/file/ImportFile";
 
 const App = () => {
   const [page, setPage] = useState("login");
@@ -24,6 +25,7 @@ const App = () => {
   const [creatingProject, setCreatingProject] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [creatingFile, setCreatingFile] = useState(false);
+  const [importingFile, setImportingFile] = useState(false);
 
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -312,6 +314,20 @@ const App = () => {
     setPage("file-detail");
   };
 
+  // Handler for importing a file into the project
+  const handleImportFile = () => {
+    setImportingFile(true);
+    setPage("import-file");
+  };
+
+  // Handler for after file is imported
+  const handleFileImported = () => {
+    setImportingFile(false);
+    // Refresh project files after import
+    if (selectedProject) handleProjectClick(selectedProject);
+    else setPage("dashboard");
+  };
+
   if (page === "edit-profile" && user) {
     return (
       <EditProfile
@@ -354,6 +370,16 @@ const App = () => {
     );
   }
 
+  if (page === "import-file" && importingFile && selectedProject) {
+    return (
+      <ImportFile
+        projectId={selectedProject.id}
+        onBack={() => { setImportingFile(false); setPage("project-detail"); }}
+        onImportSuccess={handleFileImported}
+      />
+    );
+  }
+
   if (page === "project-detail" && selectedProject) {
     return (
       <ProjectDetail
@@ -363,6 +389,7 @@ const App = () => {
         onDelete={handleDeleteProject}
         onBack={handleBackToDashboard}
         onCreateFile={handleCreateFile}
+        onImportFile={handleImportFile}
         onFileClick={handleFileClick}
       />
     );

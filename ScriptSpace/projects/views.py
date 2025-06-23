@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, permissions
 from .models import Project, File
 from .serializers import ProjectSerializer, FileSerializer, RunSavedFileSerializer
@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from executor.docker_runner import run_code
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
 
 # Create your views here.
 
@@ -83,3 +83,35 @@ class RunSavedFileView(APIView):
             return Response({'error': 'File not found or forbidden'}, status=status.HTTP_404_NOT_FOUND)
         result = run_code(file.content, file.language, input_data)
         return Response(result, status=status.HTTP_200_OK)
+
+@extend_schema(tags=["Files"], summary="Generate shareable link for a file", description="Generate or retrieve a shareable link (UUID) for a file you own.")
+class FileShareLinkView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    def post(self, request, pk):
+        file = get_object_or_404(File, pk=pk, project__owner=request.user)
+        share_uuid = file.generate_share_uuid()
+        return Response({"share_uuid": str(share_uuid)}, status=200)
+
+@extend_schema(
+    tags=["Files"],
+    summary="Import a shared file by share link",
+    description="Given a share_uuid and a project ID, copy the shared file into the user's project. Returns the new file info.",
+    parameters=[OpenApiParameter("share_uuid", str, OpenApiParameter.QUERY, required=True), OpenApiParameter("project", int, OpenApiParameter.QUERY, required=True)]
+)
+class ImportSharedFileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+        share_uuid = request.query_params.get("share_uuid")
+        project_id = request.query_params.get("project")
+        if not share_uuid or not project_id:
+            return Response({"error": "share_uuid and project are required"}, status=400)
+        file = get_object_or_404(File, share_uuid=share_uuid)
+        project = get_object_or_404(Project, pk=project_id, owner=request.user)
+        new_file = File.objects.create(
+            project=project,
+            filename=file.filename,
+            content=file.content,
+            language=file.language
+        )
+        serializer = FileSerializer(new_file)
+        return Response(serializer.data, status=201)

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import SocialLogin from "../common/SocialLogin";
 import InputField from "../common/InputField";
 
@@ -50,7 +51,9 @@ const RegisterForm = ({ onSwitchToLogin }) => {
       {error && <div className="error-message" style={{marginBottom: 16}}>{error}</div>}
       {success && <div className="success-message" style={{marginBottom: 16}}>{success}</div>}
       <h2 className="form-title">Sign up with</h2>
-      <SocialLogin />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <SocialLogin />
+      </GoogleOAuthProvider>
 
       <p className="separator"><span>or</span></p>
 
